@@ -278,11 +278,19 @@ Module.prototype.fetch = function(requestCache) {
     while ((m = mods.shift())) {
       // When 404 occurs, the params error will be true
       if(error === true) {
-        m.error()
-      }
-      else {
-        m.load()
-      }
+            if(data.vars&&data.vars.domain&&m.uri.indexOf(data.vars.domain)){
+                if(data.vars.replaceDomain) {
+                    m.uri = m.uri.replace(data.vars.domain, data.vars.replaceDomain);
+                    emit("replaceDomain", m.uri);
+                    m.fetch();
+                    return
+                }
+            }
+            m.error();
+        }
+        else {
+            m.load();
+        }
     }
   }
 }
